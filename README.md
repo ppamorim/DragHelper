@@ -1,12 +1,10 @@
 ﻿[1][10]
 
 [![Build Status](https://api.travis-ci.org/ppamorim/DragHelper.svg?branch=master)](https://travis-ci.org/ppamorim/DragHelper)
-[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Dragger-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1673)
-[![JitPack](https://img.shields.io/github/release/ppamorim/Dragger.svg?label=JitPack%20Maven)](https://jitpack.io/#ppamorim/Dragger)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-DragHelper-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1673)
+[![JitPack](https://img.shields.io/github/release/ppamorim/DragHelper.svg?label=JitPack%20Maven)](https://jitpack.io/#ppamorim/DragHelper)
 
 This library should work on API 10 (but not tested [yet][1337]).
-
-![Demo 1][11]
 
 Contributors
 ------------

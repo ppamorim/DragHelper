@@ -15,10 +15,21 @@
 */
 package com.github.ppamorim.draghelper;
 
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.FrameLayout;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class BaseActivity extends AppCompatActivity {
 
+  @Bind(R.id.drag_view) FrameLayout dragView;
+  @Bind(R.id.container_view) FrameLayout containerView;
 
-
+  @Override protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_base);
+    ButterKnife.bind(this);
+    new DragHelper(containerView, dragView).start();
+  }
 }
