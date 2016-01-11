@@ -2,7 +2,6 @@ package com.github.ppamorim.draghelper;
 
 import android.support.v4.widget.ViewDragHelper;
 import android.view.View;
-import android.view.ViewGroup;
 
 public class ViewDragHelperCallback extends ViewDragHelper.Callback {
 
@@ -25,7 +24,7 @@ public class ViewDragHelperCallback extends ViewDragHelper.Callback {
    * @return if the child on focus is equals the DraggerView
    */
   @Override public boolean tryCaptureView(View child, int pointerId) {
-    return child.equals(dragHelper.getDragView(0));
+    return child.equals(dragHelper.getDragView());
   }
 
   /**
@@ -38,8 +37,8 @@ public class ViewDragHelperCallback extends ViewDragHelper.Callback {
    * @return the offset of slide
    */
   @Override public int clampViewPositionHorizontal(View child, int left, int dx) {
-    return Math.min(Math.max(left, child.getPaddingLeft()),
-        child.getWidth() - dragHelper.getDragView(0).getWidth());
+    return Math.min(Math.max(left, dragHelper.getPaddingLeft()),
+        dragHelper.getWidth() - dragHelper.getDragView().getWidth());
   }
 
   /**
@@ -52,8 +51,8 @@ public class ViewDragHelperCallback extends ViewDragHelper.Callback {
    * @return the offset of slide
    */
   @Override public int clampViewPositionVertical(View child, int top, int dy) {
-    return Math.min(Math.max(top, child.getPaddingTop()),
-        child.getHeight() - dragHelper.getDragView(0).getHeight());
+    return Math.min(Math.max(top, dragHelper.getPaddingTop()),
+        dragHelper.getHeight() - dragHelper.getDragView().getHeight());
   }
 
   /**

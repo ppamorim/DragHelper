@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:draghelper_layout="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     
-    <FrameLayout
+    <com.github.ppamorim.draghelper.DragHelper
         android:id="@+id/container_view"
         android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:layout_height="200dp"
+        draghelper_layout:drag_view_id="@+id/drag_view">
 
         <FrameLayout
             android:id="@+id/drag_view"
@@ -15,6 +17,6 @@
             android:layout_height="80dp"
             android:background="@color/accent"/>
 
-    </FrameLayout>
+    </com.github.ppamorim.draghelper.DragHelper>
 
 </LinearLayout>
