@@ -11,7 +11,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import java.util.ArrayList;
 import java.util.WeakHashMap;
 
 public class DragHelper extends FrameLayout {
@@ -192,7 +191,7 @@ public class DragHelper extends FrameLayout {
   }
 
   /**
-   * Map the layout attributes, the dragView and shadowView, after, find the view by id.
+   * Map the views, search these views on the layout.
    *
    */
   private void mapGUI() {
@@ -207,7 +206,7 @@ public class DragHelper extends FrameLayout {
         views.put(i, view);
       }
     } else {
-      throw new IllegalStateException("DragHelper must contains only one direct child");
+      throw new IllegalStateException("DragHelper must contains one or more direct child");
     }
   }
 
