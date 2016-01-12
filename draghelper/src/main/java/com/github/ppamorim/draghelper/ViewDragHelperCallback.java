@@ -8,7 +8,7 @@ public class ViewDragHelperCallback extends ViewDragHelper.Callback {
   private DragHelper dragHelper;
 
   /**
-   * The constructor get the instance of FlapBar and Bar
+   * The constructor get the instance of DragHelper
    *
    * @param dragHelper provide the instance of DragHelper
    */
@@ -24,7 +24,8 @@ public class ViewDragHelperCallback extends ViewDragHelper.Callback {
    * @return if the child on focus is equals the DraggerView
    */
   @Override public boolean tryCaptureView(View child, int pointerId) {
-    return child.equals(dragHelper.getDragView());
+    Object tag = child.getTag();
+    return tag instanceof Integer && child.equals(dragHelper.getDragView((Integer) tag));
   }
 
   /**
@@ -37,8 +38,13 @@ public class ViewDragHelperCallback extends ViewDragHelper.Callback {
    * @return the offset of slide
    */
   @Override public int clampViewPositionHorizontal(View child, int left, int dx) {
-    return Math.min(Math.max(left, dragHelper.getPaddingLeft()),
-        dragHelper.getWidth() - dragHelper.getDragView().getWidth());
+    Object tag = child.getTag();
+    if(tag instanceof Integer) {
+      return Math.min(Math.max(left, dragHelper.getPaddingLeft()),
+          dragHelper.getWidth() - dragHelper.getDragView((Integer) tag).getWidth());
+    } else {
+      return 0;
+    }
   }
 
   /**
@@ -51,8 +57,13 @@ public class ViewDragHelperCallback extends ViewDragHelper.Callback {
    * @return the offset of slide
    */
   @Override public int clampViewPositionVertical(View child, int top, int dy) {
-    return Math.min(Math.max(top, dragHelper.getPaddingTop()),
-        dragHelper.getHeight() - dragHelper.getDragView().getHeight());
+    Object tag = child.getTag();
+    if(tag instanceof Integer) {
+      return Math.min(Math.max(top, dragHelper.getPaddingTop()),
+          dragHelper.getHeight() - dragHelper.getDragView((Integer) tag).getHeight());
+    } else {
+      return 0;
+    }
   }
 
   /**

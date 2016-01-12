@@ -6,12 +6,19 @@
 
 This library should work on API 10 (but not tested [yet][1337]).
 
+TODO
+----
+
+* Add outscreen offset
+* Add auto smooth drag
+* Add support of multi touch
+
 Contributors
 ------------
 
 * [Pedro Paulo de Amorim][3]
 
-This was only possible because [Pedro Vicente Gómez Sánchez][4] helped me and I am very grateful for that! Thank you. :)
+Thanks for [Pedro Vicente Gómez Sánchez][4]!
 
 Developed By
 ------------
@@ -57,4 +64,3 @@ License
 [13]: https://github.com/ksoichiro/Android-ObservableScrollView
 [14]: https://github.com/facebook/rebound
 [1337]: https://www.youtube.com/watch?v=eQyjP2O1S40
-[123456789]: https://github.com/ppamorim/PrismView

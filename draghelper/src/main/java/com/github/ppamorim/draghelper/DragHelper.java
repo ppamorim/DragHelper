@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import java.util.ArrayList;
 
 public class DragHelper extends FrameLayout {
 
@@ -25,7 +26,7 @@ public class DragHelper extends FrameLayout {
   private TypedArray attributes;
   private ViewDragHelper viewDragHelper;
 
-  private View dragView;
+  private ArrayList<View> dragView;
 
   public DragHelper(Context context) {
     super(context);
@@ -41,11 +42,6 @@ public class DragHelper extends FrameLayout {
     initializeAttributes(attrs);
   }
 
-  public DragHelper setDragView(View dragView) {
-    this.dragView = dragView;
-    return this;
-  }
-
   /**
    * Bind the attributes of the view and config
    * the DragView with these params.
@@ -53,7 +49,7 @@ public class DragHelper extends FrameLayout {
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
     if (!isInEditMode()) {
-      mapGUI(attributes);
+      mapGUI();
       attributes.recycle();
       configDragViewHelper();
     }
@@ -115,11 +111,17 @@ public class DragHelper extends FrameLayout {
     if ((actionMasked & MotionEventCompat.ACTION_MASK) == MotionEvent.ACTION_DOWN) {
       activePointerId = MotionEventCompat.getPointerId(ev, actionMasked);
     }
-    if (activePointerId == INVALID_POINTER) {
+    if (activePointerId == INVALID_POINTER || dragView == null) {
       return false;
     }
     viewDragHelper.processTouchEvent(ev);
-    return isViewHit(dragView, (int) ev.getX(), (int) ev.getY());
+    boolean isClickAtView = false;
+    for(View view : dragView) {
+      if(!isClickAtView) {
+        isClickAtView = isViewHit(view, (int) ev.getX(), (int) ev.getY());
+      }
+    }
+    return isClickAtView;
   }
 
   /**
@@ -135,7 +137,7 @@ public class DragHelper extends FrameLayout {
 
   private boolean smoothSlideTo(View view, int x, int y) {
     if (viewDragHelper != null && viewDragHelper.smoothSlideViewTo(view, x, y)) {
-      ViewCompat.postInvalidateOnAnimation(dragView);
+      ViewCompat.postInvalidateOnAnimation(dragView.get((Integer) view.getTag()));
       return true;
     }
     return false;
@@ -161,8 +163,8 @@ public class DragHelper extends FrameLayout {
     return dragLimit;
   }
 
-  public View getDragView() {
-    return dragView;
+  public View getDragView(int position) {
+    return dragView.get(position);
   }
 
   /**
@@ -189,14 +191,17 @@ public class DragHelper extends FrameLayout {
   /**
    * Map the layout attributes, the dragView and shadowView, after, find the view by id.
    *
-   * @param attributes
    */
-  private void mapGUI(TypedArray attributes) {
-    if (getChildCount() == 1) {
-      int dragViewId = attributes.getResourceId(
-          R.styleable.draghelper_layout_drag_view_id, 0);
-      if (dragViewId > 0) {
-        dragView = findViewById(dragViewId);
+  private void mapGUI() {
+    int count = getChildCount();
+    if(dragView == null) {
+      dragView = new ArrayList<>(count);
+    }
+    if (count > 0) {
+      for(int i = 0; i < count; i++) {
+        View view = getChildAt(i);
+        view.setTag(i);
+        dragView.add(view);
       }
     } else {
       throw new IllegalStateException("DragHelper must contains only one direct child");
