@@ -1,4 +1,4 @@
-﻿[1][10]
+﻿DragHelper
 
 [![Build Status](https://api.travis-ci.org/ppamorim/DragHelper.svg?branch=master)](https://travis-ci.org/ppamorim/DragHelper)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-DragHelper-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/1673)
