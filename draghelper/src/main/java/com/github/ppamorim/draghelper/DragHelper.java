@@ -2,6 +2,8 @@ package com.github.ppamorim.draghelper;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
@@ -10,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import java.util.ArrayList;
+import java.util.WeakHashMap;
 
 public class DragHelper extends FrameLayout {
 
@@ -26,7 +29,7 @@ public class DragHelper extends FrameLayout {
   private TypedArray attributes;
   private ViewDragHelper viewDragHelper;
 
-  private ArrayList<View> dragView;
+  private WeakHashMap<Integer, View> views;
 
   public DragHelper(Context context) {
     super(context);
@@ -111,12 +114,12 @@ public class DragHelper extends FrameLayout {
     if ((actionMasked & MotionEventCompat.ACTION_MASK) == MotionEvent.ACTION_DOWN) {
       activePointerId = MotionEventCompat.getPointerId(ev, actionMasked);
     }
-    if (activePointerId == INVALID_POINTER || dragView == null) {
+    if (activePointerId == INVALID_POINTER || views == null) {
       return false;
     }
     viewDragHelper.processTouchEvent(ev);
     boolean isClickAtView = false;
-    for(View view : dragView) {
+    for(View view : views.values()) {
       if(!isClickAtView) {
         isClickAtView = isViewHit(view, (int) ev.getX(), (int) ev.getY());
       }
@@ -137,7 +140,7 @@ public class DragHelper extends FrameLayout {
 
   private boolean smoothSlideTo(View view, int x, int y) {
     if (viewDragHelper != null && viewDragHelper.smoothSlideViewTo(view, x, y)) {
-      ViewCompat.postInvalidateOnAnimation(dragView.get((Integer) view.getTag()));
+      ViewCompat.postInvalidateOnAnimation(views.get((Integer) view.getTag()));
       return true;
     }
     return false;
@@ -164,7 +167,7 @@ public class DragHelper extends FrameLayout {
   }
 
   public View getDragView(int position) {
-    return dragView.get(position);
+    return views != null ? views.get(position) : null;
   }
 
   /**
@@ -194,14 +197,14 @@ public class DragHelper extends FrameLayout {
    */
   private void mapGUI() {
     int count = getChildCount();
-    if(dragView == null) {
-      dragView = new ArrayList<>(count);
+    if(views == null) {
+      views = new WeakHashMap<>(count);
     }
     if (count > 0) {
       for(int i = 0; i < count; i++) {
         View view = getChildAt(i);
         view.setTag(i);
-        dragView.add(view);
+        views.put(i, view);
       }
     } else {
       throw new IllegalStateException("DragHelper must contains only one direct child");
@@ -236,6 +239,71 @@ public class DragHelper extends FrameLayout {
         && screenX < viewLocation[0] + view.getWidth()
         && screenY >= viewLocation[1]
         && screenY < viewLocation[1] + view.getHeight();
+  }
+
+  /**
+   * Perform the save of the instance state of some params that's used at dragView.
+   * @return Parcelable
+   */
+  @Override public Parcelable onSaveInstanceState() {
+    Parcelable superState = super.onSaveInstanceState();
+    SavedState ss = new SavedState(superState);
+    ss.views = (View[]) this.views.values().toArray();
+    ss.horizontalDragRange = this.horizontalDragRange;
+    ss.verticalDragRange = this.verticalDragRange;
+    ss.dragLimit = this.dragLimit;
+    return ss;
+  }
+
+  /**
+   * Called when the view is restored
+   * @param state Return the state
+   */
+  @Override public void onRestoreInstanceState(Parcelable state) {
+    SavedState ss = (SavedState) state;
+    super.onRestoreInstanceState(ss.getSuperState());
+    this.horizontalDragRange = ss.horizontalDragRange;
+    this.verticalDragRange = ss.verticalDragRange;
+    this.dragLimit = ss.dragLimit;
+  }
+
+  private static class SavedState extends BaseSavedState {
+
+    private View[] views;
+    private float horizontalDragRange;
+    private float verticalDragRange;
+    private float dragLimit;
+
+    SavedState(Parcelable superState) {
+      super(superState);
+    }
+
+    private SavedState(Parcel in) {
+      super(in);
+      this.views = (View[]) in.readArray(View.class.getClassLoader());
+      this.horizontalDragRange = in.readFloat();
+      this.verticalDragRange = in.readFloat();
+      this.dragLimit = in.readFloat();
+    }
+
+    @Override public void writeToParcel(Parcel out, int flags) {
+      super.writeToParcel(out, flags);
+      out.writeArray(views);
+      out.writeFloat(horizontalDragRange);
+      out.writeFloat(verticalDragRange);
+      out.writeFloat(dragLimit);
+    }
+
+    public static final Parcelable.Creator<SavedState> CREATOR
+        = new Parcelable.Creator<SavedState>() {
+      public SavedState createFromParcel(Parcel in) {
+        return new SavedState(in);
+      }
+
+      public SavedState[] newArray(int size) {
+        return new SavedState[size];
+      }
+    };
   }
 
 }

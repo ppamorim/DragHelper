@@ -25,7 +25,13 @@ public class ViewDragHelperCallback extends ViewDragHelper.Callback {
    */
   @Override public boolean tryCaptureView(View child, int pointerId) {
     Object tag = child.getTag();
-    return tag instanceof Integer && child.equals(dragHelper.getDragView((Integer) tag));
+    if(tag instanceof Integer && dragHelper != null) {
+      View view = dragHelper.getDragView((Integer) tag);
+      if(view != null) {
+        return child.equals(view);
+      }
+    }
+    return false;
   }
 
   /**
@@ -39,9 +45,10 @@ public class ViewDragHelperCallback extends ViewDragHelper.Callback {
    */
   @Override public int clampViewPositionHorizontal(View child, int left, int dx) {
     Object tag = child.getTag();
-    if(tag instanceof Integer) {
+    if(tag instanceof Integer && dragHelper != null) {
+      View view = dragHelper.getDragView((Integer) tag);
       return Math.min(Math.max(left, dragHelper.getPaddingLeft()),
-          dragHelper.getWidth() - dragHelper.getDragView((Integer) tag).getWidth());
+          dragHelper.getWidth() - (view != null ? view.getWidth() : 0));
     } else {
       return 0;
     }
@@ -58,9 +65,10 @@ public class ViewDragHelperCallback extends ViewDragHelper.Callback {
    */
   @Override public int clampViewPositionVertical(View child, int top, int dy) {
     Object tag = child.getTag();
-    if(tag instanceof Integer) {
+    if(tag instanceof Integer && dragHelper != null) {
+      View view = dragHelper.getDragView((Integer) tag);
       return Math.min(Math.max(top, dragHelper.getPaddingTop()),
-          dragHelper.getHeight() - dragHelper.getDragView((Integer) tag).getHeight());
+          dragHelper.getHeight() - (view !=  null ? view.getHeight() : 0));
     } else {
       return 0;
     }
@@ -74,7 +82,7 @@ public class ViewDragHelperCallback extends ViewDragHelper.Callback {
    * @return max horizontal distance that view on focus can slide
    */
   @Override public int getViewHorizontalDragRange(View child) {
-    return (int) dragHelper.getHorizontalDragRange();
+    return dragHelper != null ? (int) dragHelper.getHorizontalDragRange() : 0;
   }
 
   /**
@@ -85,7 +93,7 @@ public class ViewDragHelperCallback extends ViewDragHelper.Callback {
    * @return max vertical distance that view on focus can slide
    */
   @Override public int getViewVerticalDragRange(View child) {
-    return (int) dragHelper.getVerticalDragRange();
+    return dragHelper != null ? (int) dragHelper.getVerticalDragRange() : 0;
   }
 
 }
